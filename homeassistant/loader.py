@@ -64,7 +64,7 @@ def manifest_from_legacy_module(domain: str, module: ModuleType) -> Dict:
 
 
 async def _async_get_custom_components(
-    hass: "HomeAssistant"
+    hass: "HomeAssistant",
 ) -> Dict[str, "Integration"]:
     """Return list of custom integrations."""
     try:
@@ -102,7 +102,7 @@ async def _async_get_custom_components(
 
 
 async def async_get_custom_components(
-    hass: "HomeAssistant"
+    hass: "HomeAssistant",
 ) -> Dict[str, "Integration"]:
     """Return cached list of custom integrations."""
     reg_or_evt = hass.data.get(DATA_CUSTOM_COMPONENTS)
@@ -307,7 +307,7 @@ class IntegrationNotFound(LoaderError):
 
     def __init__(self, domain: str) -> None:
         """Initialize a component not found error."""
-        super().__init__(f"Integration {domain} not found.")
+        super().__init__(f"Integration '{domain}' not found.")
         self.domain = domain
 
 

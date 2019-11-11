@@ -79,6 +79,8 @@ def _parse_see_args(message, subscribe_topic):
         kwargs["attributes"]["address"] = message["addr"]
     if "cog" in message:
         kwargs["attributes"]["course"] = message["cog"]
+    if "bs" in message:
+        kwargs["attributes"]["battery_status"] = message["bs"]
     if "t" in message:
         if message["t"] in ("c", "u"):
             kwargs["source_type"] = SOURCE_TYPE_GPS
@@ -105,7 +107,7 @@ def _decrypt_payload(secret, topic, ciphertext):
     try:
         keylen, decrypt = get_cipher()
     except OSError:
-        _LOGGER.warning("Ignoring encrypted payload because libsodium not installed")
+        _LOGGER.warning("Ignoring encrypted payload because nacl not installed")
         return None
 
     if isinstance(secret, dict):
@@ -115,8 +117,7 @@ def _decrypt_payload(secret, topic, ciphertext):
 
     if key is None:
         _LOGGER.warning(
-            "Ignoring encrypted payload because no decryption key known "
-            "for topic %s",
+            "Ignoring encrypted payload because no decryption key known for topic %s",
             topic,
         )
         return None
@@ -132,8 +133,7 @@ def _decrypt_payload(secret, topic, ciphertext):
         return message
     except ValueError:
         _LOGGER.warning(
-            "Ignoring encrypted payload because unable to decrypt using "
-            "key for topic %s",
+            "Ignoring encrypted payload because unable to decrypt using key for topic %s",
             topic,
         )
         return None

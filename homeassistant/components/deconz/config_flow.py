@@ -13,6 +13,7 @@ from homeassistant.core import callback
 from homeassistant.helpers import aiohttp_client
 
 from .const import (
+    _LOGGER,
     CONF_ALLOW_CLIP_SENSOR,
     CONF_ALLOW_DECONZ_GROUPS,
     CONF_BRIDGEID,
@@ -176,6 +177,8 @@ class DeconzFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         uuid = discovery_info[ATTR_UUID].replace("uuid:", "")
 
+        _LOGGER.debug("deCONZ gateway discovered (%s)", uuid)
+
         for entry in self.hass.config_entries.async_entries(DOMAIN):
             if uuid == entry.data.get(CONF_UUID):
                 return await self._update_entry(entry, discovery_info[CONF_HOST])
@@ -187,8 +190,9 @@ class DeconzFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         ):
             return self.async_abort(reason="already_in_progress")
 
-        # pylint: disable=unsupported-assignment-operation
+        # pylint: disable=no-member # https://github.com/PyCQA/pylint/issues/3167
         self.context[CONF_BRIDGEID] = bridgeid
+        self.context["title_placeholders"] = {"host": discovery_info[CONF_HOST]}
 
         self.deconz_config = {
             CONF_HOST: discovery_info[CONF_HOST],
